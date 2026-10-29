@@ -1,0 +1,6 @@
+{
+  "name": "ExamenLive: Real-Time Examination Management and Communication System",
+  "description": "Comprehensive real-time examination management system combining seating arrangements, invigilation allocation, live communication, emergency alerts, and reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

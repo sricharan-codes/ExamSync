@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'laxmisricharank@gmail.com' ||
+        request.auth.token.email == 'babecanikissu7@gmail.com'
+      );
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isRegisteredFaculty() {
+      return isSignedIn() && (
+        isAdmin() ||
+        exists(/databases/$(database)/documents/faculty/$(request.auth.uid)) ||
+        exists(/databases/$(database)/documents/faculty/$(request.auth.token.email))
+      );
+    }
+
+    // Connection test document
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // Admins collection: Only admins can manage
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Faculty collection: ONLY ADMIN CAN REGISTER OR MANAGE FACULTY
+    match /faculty/{facultyId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Examination schedules
+    match /exams/{examId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isSignedIn();
+    }
+
+    // Invigilation Duties
+    match /duties/{dutyId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isSignedIn();
+    }
+
+    // Rooms & Seating layout
+    match /rooms/{roomId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isAdmin();
+      allow update: if isSignedIn();
+    }
+
+    // Live Communication Messages
+    match /messages/{messageId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // Chat Channels
+    match /channels/{channelId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Emergency SOS Alerts
+    match /sosAlerts/{alertId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // Incident / Malpractice Reports
+    match /incidentReports/{incidentId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+  }
+}

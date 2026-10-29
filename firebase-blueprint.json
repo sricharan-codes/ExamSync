@@ -1,0 +1,423 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Administrator / Exam Controller record",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Admin email address"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin"],
+          "description": "User role"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of creation"
+        }
+      },
+      "required": ["email", "role"]
+    },
+    "Faculty": {
+      "title": "Faculty",
+      "description": "Faculty member or invigilator registered by admin",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique faculty identifier"
+        },
+        "email": {
+          "type": "string",
+          "description": "Institutional email address"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of faculty member"
+        },
+        "department": {
+          "type": "string",
+          "description": "Academic department"
+        },
+        "designation": {
+          "type": "string",
+          "description": "Academic title or designation"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "staff"],
+          "description": "Assigned system role"
+        },
+        "registeredBy": {
+          "type": "string",
+          "description": "Email of admin who registered this faculty"
+        },
+        "registeredAt": {
+          "type": "string",
+          "description": "Registration timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "suspended"],
+          "description": "Account status"
+        }
+      },
+      "required": ["email", "name", "department", "role", "registeredBy"]
+    },
+    "Exam": {
+      "title": "Exam",
+      "description": "Scheduled course examination",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Exam unique ID"
+        },
+        "courseCode": {
+          "type": "string",
+          "description": "Course code (e.g. CS-401)"
+        },
+        "courseName": {
+          "type": "string",
+          "description": "Full title of the course"
+        },
+        "date": {
+          "type": "string",
+          "description": "Exam date in YYYY-MM-DD"
+        },
+        "timeSlot": {
+          "type": "string",
+          "description": "Scheduled time slot"
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "Duration in minutes"
+        },
+        "venue": {
+          "type": "string",
+          "description": "Assigned hall or room"
+        },
+        "totalStudents": {
+          "type": "number",
+          "description": "Total candidate count"
+        },
+        "chiefInvigilatorId": {
+          "type": "string",
+          "description": "Assigned chief invigilator user ID"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Upcoming", "Ongoing", "Completed", "Rescheduled"],
+          "description": "Exam lifecycle status"
+        },
+        "department": {
+          "type": "string",
+          "description": "Host department"
+        }
+      },
+      "required": ["courseCode", "courseName", "date", "venue", "status"]
+    },
+    "InvigilationDuty": {
+      "title": "InvigilationDuty",
+      "description": "Assigned invigilation duty for faculty",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Duty unique ID"
+        },
+        "examId": {
+          "type": "string",
+          "description": "Related exam ID"
+        },
+        "courseCode": {
+          "type": "string",
+          "description": "Course code"
+        },
+        "courseName": {
+          "type": "string",
+          "description": "Course name"
+        },
+        "venue": {
+          "type": "string",
+          "description": "Hall venue"
+        },
+        "date": {
+          "type": "string",
+          "description": "Duty date"
+        },
+        "timeSlot": {
+          "type": "string",
+          "description": "Time slot"
+        },
+        "facultyId": {
+          "type": "string",
+          "description": "Assigned faculty ID"
+        },
+        "facultyName": {
+          "type": "string",
+          "description": "Assigned faculty full name"
+        },
+        "department": {
+          "type": "string",
+          "description": "Faculty department"
+        },
+        "dutyType": {
+          "type": "string",
+          "enum": ["Chief Invigilator", "Invigilator", "Relieving Staff", "Flying Squad"],
+          "description": "Type of duty"
+        },
+        "checkInStatus": {
+          "type": "string",
+          "enum": ["Pending", "Checked-In", "Completed", "Absent"],
+          "description": "Duty check-in status"
+        },
+        "checkInTime": {
+          "type": "string",
+          "description": "Time of check-in"
+        }
+      },
+      "required": ["examId", "venue", "facultyName", "dutyType", "checkInStatus"]
+    },
+    "RoomLayout": {
+      "title": "RoomLayout",
+      "description": "Seating grid and student allocations for a venue",
+      "type": "object",
+      "properties": {
+        "venue": {
+          "type": "string",
+          "description": "Venue name"
+        },
+        "building": {
+          "type": "string",
+          "description": "Campus building name"
+        },
+        "capacity": {
+          "type": "number",
+          "description": "Total seats"
+        },
+        "rows": {
+          "type": "number",
+          "description": "Row count"
+        },
+        "cols": {
+          "type": "number",
+          "description": "Column count"
+        },
+        "seats": {
+          "type": "array",
+          "description": "List of student seats"
+        }
+      },
+      "required": ["venue", "capacity", "rows", "cols"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Live communication message between controllers and faculty",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Message ID"
+        },
+        "channelId": {
+          "type": "string",
+          "description": "Target channel"
+        },
+        "senderId": {
+          "type": "string",
+          "description": "UID of sender"
+        },
+        "senderName": {
+          "type": "string",
+          "description": "Display name of sender"
+        },
+        "senderRole": {
+          "type": "string",
+          "enum": ["admin", "staff"],
+          "description": "Sender role"
+        },
+        "senderAvatar": {
+          "type": "string",
+          "description": "Avatar URL"
+        },
+        "content": {
+          "type": "string",
+          "description": "Text message content"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Display timestamp"
+        }
+      },
+      "required": ["channelId", "senderName", "content", "timestamp"]
+    },
+    "ChatChannel": {
+      "title": "ChatChannel",
+      "description": "Live exam communication channel",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Channel ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Channel display name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["broadcast", "room", "squad", "private"],
+          "description": "Channel category"
+        },
+        "description": {
+          "type": "string",
+          "description": "Channel purpose description"
+        }
+      },
+      "required": ["id", "name", "type"]
+    },
+    "SosAlert": {
+      "title": "SosAlert",
+      "description": "Emergency alert triggered during an examination",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Alert unique ID"
+        },
+        "venue": {
+          "type": "string",
+          "description": "Hall where emergency occurred"
+        },
+        "reportedBy": {
+          "type": "string",
+          "description": "Name of reporting faculty/controller"
+        },
+        "facultyId": {
+          "type": "string",
+          "description": "Faculty ID"
+        },
+        "alertType": {
+          "type": "string",
+          "enum": ["Medical Emergency", "Question Paper Issue", "Disruptive Behavior", "Technical/Power Failure", "Other"],
+          "description": "Nature of emergency"
+        },
+        "description": {
+          "type": "string",
+          "description": "Details of the incident"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Report timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Active", "Acknowledged", "Resolved"],
+          "description": "Alert resolution status"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["High", "Critical", "Medium"],
+          "description": "Severity level"
+        }
+      },
+      "required": ["venue", "reportedBy", "alertType", "description", "status", "priority"]
+    },
+    "IncidentReport": {
+      "title": "IncidentReport",
+      "description": "Candidate malpractice or operational irregularity log",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Incident ID"
+        },
+        "examId": {
+          "type": "string",
+          "description": "Exam ID"
+        },
+        "courseCode": {
+          "type": "string",
+          "description": "Course code"
+        },
+        "venue": {
+          "type": "string",
+          "description": "Venue"
+        },
+        "studentRollNumber": {
+          "type": "string",
+          "description": "Candidate roll number"
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Candidate full name"
+        },
+        "reportedBy": {
+          "type": "string",
+          "description": "Reporting invigilator"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Malpractice", "Late Arrival", "Medical", "Dispute"],
+          "description": "Incident category"
+        },
+        "details": {
+          "type": "string",
+          "description": "Detailed explanation"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Incident timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Pending Review", "Escalated", "Resolved"],
+          "description": "Review status"
+        }
+      },
+      "required": ["courseCode", "venue", "studentName", "category", "details", "status"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Admin identity and permissions"
+    },
+    "/faculty/{facultyId}": {
+      "schema": "Faculty",
+      "description": "Faculty registry managed by admin"
+    },
+    "/exams/{examId}": {
+      "schema": "Exam",
+      "description": "Exam schedule records"
+    },
+    "/duties/{dutyId}": {
+      "schema": "InvigilationDuty",
+      "description": "Invigilation duty allocation entries"
+    },
+    "/rooms/{roomId}": {
+      "schema": "RoomLayout",
+      "description": "Room seating maps and candidate assignments"
+    },
+    "/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Real-time communication messages"
+    },
+    "/channels/{channelId}": {
+      "schema": "ChatChannel",
+      "description": "Communication channels"
+    },
+    "/sosAlerts/{alertId}": {
+      "schema": "SosAlert",
+      "description": "Emergency SOS broadcast alerts"
+    },
+    "/incidentReports/{incidentId}": {
+      "schema": "IncidentReport",
+      "description": "Candidate malpractice & incident reports"
+    }
+  }
+}
